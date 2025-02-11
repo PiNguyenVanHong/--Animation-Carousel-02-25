@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Swipe Detection Example</title>
+  <style>
+    body {
+      height: 200vh; /* Make the body taller to allow scrolling */
+      margin: 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-size: 2em;
+    }
+  </style>
+</head>
+<body>
+  <div>Swipe Up or Down</div>
+  <script>
+    let touchStartY = 0;
+    let isTouchActive = false;
+    let isAnimating = false;
+    let scrollAllowed = true;
+    let lastScrollTime = 0;
+
+    function animateSlide(direction) {
+      console.log(`Animating slide ${direction}`);
+      // Example animation logic
+      isAnimating = true;
+      setTimeout(() => {
+        isAnimating = false;
+      }, 500); // Simulate animation duration
+    }
+
+    window.addEventListener(
+      "touchstart",
+      (e) => {
+        touchStartY = e.touches[0].clientY;
+        isTouchActive = true;
+      },
+      {
+        passive: false,
+      }
+    );
+
+    window.addEventListener(
+      "touchmove",
+      (e) => {
+        e.preventDefault();
+        if (!isTouchActive || isAnimating || !scrollAllowed) return;
+        const touchCurrentY = e.touches[0].clientY;
+        const difference = touchStartY - touchCurrentY;
+        if (Math.abs(difference) > 10) {
+          isTouchActive = false;
+          const direction = difference > 0 ? "down" : "up";
+          handleScroll(direction);
+        }
+      },
+      {
+        passive: false,
+      }
+    );
+
+    window.addEventListener("touchend", () => {
+      isTouchActive = false;
+    });
+
+    function handleScroll(direction) {
+      const now = Date.now();
+      if (isAnimating || !scrollAllowed) return;
+      if (now - lastScrollTime < 1000) return;
+      lastScrollTime = now;
+      animateSlide(direction);
+    }
+  </script>
+</body>
+</html>
